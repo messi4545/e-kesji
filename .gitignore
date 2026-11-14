@@ -1,0 +1,31 @@
+# Temporary Chrome Profiles & Caches
+.temp_chrome_profile*
+.chrome_flow_profile/
+*/.chrome_flow_profile/
+**/.chrome_flow_profile/**
+**/Cache/**
+**/Code Cache/**
+
+# OS and Editor files
+.DS_Store
+Thumbs.db
+*.log
+node_modules/
+
+# Legacy and unrelated project subfolders
+biohazard/
+kesmon_survivor/
+models_extracted/
+3d-models.zip
+citypop_mv/
+GPT_SoVITS_Voice_Cloning_Colab.ipynb
+build_git_history.js
+check_*.js
+compare_features.js
+diff_versions.js
+dump_conversations.js
+find_all_versions.js
+inspect_versions.*
+parse_brains.js
+prepare_versions.js
+start_biohazard.bat

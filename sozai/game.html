@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ボール避けゲーム</title>
+    <style>
+        /* 全体のスタイル */
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #f0f0f0;
+            font-family: sans-serif;
+        }
+        /* ゲームコンテナのスタイル */
+        .game-container {
+            position: relative; /* ボタンを重ねるために必要 */
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+        /* ゲームキャンバスのスタイル */
+        canvas {
+            border: 2px solid #333;
+            background-color: #fff;
+            display: block; /* 下に余分なスペースができないようにする */
+        }
+        /* リスタートボタンのスタイル */
+        #restartButton {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            padding: 15px 30px;
+            font-size: 20px;
+            color: white;
+            background-color: #007BFF;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            display: none; /* 最初は非表示 */
+        }
+        #restartButton:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+
+<div class="game-container">
+    <canvas id="gameCanvas" width="800" height="600"></canvas>
+    <button id="restartButton">リスタート</button>
+</div>
+
+<script>
+    // --- 初期設定 ---
+    const canvas = document.getElementById('gameCanvas');
+    const ctx = canvas.getContext('2d');
+    const restartButton = document.getElementById('restartButton');
+
+    // --- ゲームの状態管理 ---
+    let gameOver = false;
+    let animationFrameId;
+
+    // --- プレイヤーの定義 ---
+    const player = {
+        width: 50,
+        height: 50,
+        x: canvas.width / 2 - 25,
+        y: canvas.height - 60,
+        speed: 7,
+        color: 'green'
+    };
+
+    // --- 落下するボールの配列 ---
+    let balls = [];
+    const ballRadius = 15;
+    const ballSpeed = 4;
+
+    // --- キー入力の管理 ---
+    const keys = {
+        ArrowLeft: false,
+        ArrowRight: false
+    };
+
+    // --- イベントリスナーの設定 ---
+    window.addEventListener('keydown', (e) => {
+        if (e.key in keys) {
+            keys[e.key] = true;
+        }
+    });
+
+    window.addEventListener('keyup', (e) => {
+        if (e.key in keys) {
+            keys[e.key] = false;
+        }
+    });
+
+    restartButton.addEventListener('click', restartGame);
+
+    // --- ゲームの主要な関数 ---
+
+    /**
+     * 新しいボールを作成して配列に追加する
+     */
+    function createBall() {
+        const x = Math.random() * (canvas.width - ballRadius * 2) + ballRadius;
+        balls.push({
+            x: x,
+            y: -ballRadius, // 画面の上から出現
+            radius: ballRadius,
+            speed: ballSpeed,
+            color: 'red'
+        });
+    }
+
+    /**
+     * プレイヤーの移動を処理する
+     */
+    function movePlayer() {
+        if (keys.ArrowLeft && player.x > 0) {
+            player.x -= player.speed;
+        }
+        if (keys.ArrowRight && player.x < canvas.width - player.width) {
+            player.x += player.speed;
+        }
+    }
+
+    /**
+     * ボールの移動と画面外に出たボールの削除
+     */
+    function updateBalls() {
+        for (let i = balls.length - 1; i >= 0; i--) {
+            const ball = balls[i];
+            ball.y += ball.speed;
+
+            // ボールが画面外に出たら配列から削除
+            if (ball.y - ball.radius > canvas.height) {
+                balls.splice(i, 1);
+            }
+        }
+    }
+
+    /**
+     * 衝突判定
+     * プレイヤー（四角）とボール（円）の衝突をチェック
+     */
+    function checkCollision() {
+        for (const ball of balls) {
+            // ボールの中心に最も近いプレイヤー上の点の座標を計算
+            const closestX = Math.max(player.x, Math.min(ball.x, player.x + player.width));
+            const closestY = Math.max(player.y, Math.min(ball.y, player.y + player.height));
+
+            // 最も近い点とボールの中心との距離を計算
+            const distanceX = ball.x - closestX;
+            const distanceY = ball.y - closestY;
+            const distanceSquared = (distanceX * distanceX) + (distanceY * distanceY);
+
+            // 距離がボールの半径の2乗より小さい場合、衝突している
+            if (distanceSquared < (ball.radius * ball.radius)) {
+                gameOver = true;
+            }
+        }
+    }
+
+    /**
+     * すべてのオブジェクトを描画する
+     */
+    function draw() {
+        // 1. キャンバスをクリア
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+        // 2. プレイヤーを描画
+        ctx.fillStyle = player.color;
+        ctx.fillRect(player.x, player.y, player.width, player.height);
+
+        // 3. すべてのボールを描画
+        for (const ball of balls) {
+            ctx.beginPath();
+            ctx.arc(ball.x, ball.y, ball.radius, 0, Math.PI * 2);
+            ctx.fillStyle = ball.color;
+            ctx.fill();
+            ctx.closePath();
+        }
+    }
+
+    /**
+     * ゲームオーバー時の処理
+     */
+    function handleGameOver() {
+        cancelAnimationFrame(animationFrameId); // アニメーションを停止
+        
+        // ゲームオーバーメッセージを表示
+        ctx.fillStyle = 'rgba(0, 0, 0, 0.7)';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+        ctx.fillStyle = 'white';
+        ctx.font = '50px Arial';
+        ctx.textAlign = 'center';
+        ctx.fillText('ゲームオーバー', canvas.width / 2, canvas.height / 2 - 40);
+
+        restartButton.style.display = 'block'; // リスタートボタンを表示
+    }
+
+    /**
+     * ゲームをリスタートする
+     */
+    function restartGame() {
+        // ゲームの状態をリセット
+        gameOver = false;
+        player.x = canvas.width / 2 - 25;
+        balls = [];
+        
+        // UIをリセット
+        restartButton.style.display = 'none';
+        
+        // ゲームループを再開
+        gameLoop();
+    }
+
+    /**
+     * メインのゲームループ
+     */
+    function gameLoop() {
+        // プレイヤーとボールの位置を更新
+        movePlayer();
+        updateBalls();
+
+        // 一定の確率で新しいボールを生成
+        if (Math.random() < 0.02) { // この値を調整して難易度を変更
+            createBall();
+        }
+
+        // 衝突判定
+        checkCollision();
+
+        // 描画
+        draw();
+
+        // ゲームオーバーかどうかをチェック
+        if (gameOver) {
+            handleGameOver();
+        } else {
+            // 次のフレームをリクエスト
+            animationFrameId = requestAnimationFrame(gameLoop);
+        }
+    }
+
+    // --- ゲーム開始 ---
+    gameLoop();
+
+</script>
+
+</body>
+</html>

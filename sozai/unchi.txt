@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>投げるゲーム</title>
+    <style>
+        body {
+            font-family: sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #f0f0f0;
+        }
+        h1 {
+            color: #333;
+        }
+        .container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 15px;
+        }
+        canvas {
+            border: 3px solid #555;
+            border-radius: 8px;
+            background-color: #fff;
+            cursor: crosshair;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        }
+        input[type="file"] {
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1>背景に物体を投げるゲーム</h1>
+        <p>↓ここで好きな背景画像をアップロードできます</p>
+        <input type="file" id="background-uploader" accept="image/*">
+        <canvas id="game-canvas" width="800" height="600"></canvas>
+    </div>
+
+    <script>
+        const canvas = document.getElementById('game-canvas');
+        const ctx = canvas.getContext('2d');
+        const uploader = document.getElementById('background-uploader');
+
+        let backgroundImage = null;
+        // 投げられた物体（付着したもの）をすべて保存する配列
+        const attachedObjects = [];
+
+        // --- イベントリスナー ---
+
+        // 画像がアップロードされたときの処理
+        uploader.addEventListener('change', (event) => {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                backgroundImage = new Image();
+                backgroundImage.onload = () => {
+                    // 画像が読み込めたらアニメーションループを開始
+                    if (!animationFrameId) {
+                        gameLoop();
+                    }
+                };
+                backgroundImage.src = e.target.result;
+            };
+            reader.readAsDataURL(file);
+        });
+
+        // キャンバスがクリックされたときの処理
+        canvas.addEventListener('click', (event) => {
+            const rect = canvas.getBoundingClientRect();
+            const x = event.clientX - rect.left;
+            const y = event.clientY - rect.top;
+
+            // 新しい物体を生成して配列に追加
+            createAttachedObject(x, y);
+        });
+
+        // --- オブジェクト生成 ---
+
+        /**
+         * クリックされた位置に、付着した物体とアニメーション用のパーティクルを生成する
+         * @param {number} x - クリックされたx座標
+         * @param {number} y - クリックされたy座標
+         */
+        function createAttachedObject(x, y) {
+            const baseSize = Math.random() * 15 + 15; // 15から30のランダムなサイズ
+            const color = `hsl(30, 50%, ${Math.random() * 20 + 25}%)`; // 茶色系のランダムな色
+
+            const newObject = {
+                x: x,
+                y: y,
+                size: baseSize,
+                color: color,
+                // 物体自体の形を定義（複数の円で構成）
+                shape: [
+                    { dx: 0, dy: 0, r: baseSize * 0.8 },
+                    { dx: -baseSize * 0.4, dy: -baseSize * 0.5, r: baseSize * 0.5 },
+                    { dx: baseSize * 0.3, dy: -baseSize * 0.2, r: baseSize * 0.6 },
+                    { dx: baseSize * 0.5, dy: baseSize * 0.3, r: baseSize * 0.4 }
+                ],
+                // 付着アニメーション用のパーティクル
+                particles: createParticles(x, y, color)
+            };
+            attachedObjects.push(newObject);
+        }
+
+        /**
+         * 付着アニメーション用のパーティクルを生成する
+         * @param {number} x - 中心のx座標
+         * @param {number} y - 中心のy座標
+         * @param {string} color - ベースとなる色
+         * @returns {Array} パーティクルの配列
+         */
+        function createParticles(x, y, color) {
+            const particles = [];
+            const particleCount = 20; // 飛び散る数
+            for (let i = 0; i < particleCount; i++) {
+                particles.push({
+                    x: x,
+                    y: y,
+                    vx: (Math.random() - 0.5) * 6, // 横方向の速度
+                    vy: (Math.random() - 0.5) * 6, // 縦方向の速度
+                    radius: Math.random() * 3 + 1, // 小さなサイズ
+                    alpha: 1.0, // 初期透明度
+                    decay: Math.random() * 0.04 + 0.01, // 消える速さ
+                    color: color
+                });
+            }
+            return particles;
+        }
+
+
+        // --- 描画関連 ---
+
+        /**
+         * 物体そのものを描画する
+         * @param {object} obj - 描画する物体オブジェクト
+         */
+        function drawObject(obj) {
+            ctx.fillStyle = obj.color;
+            obj.shape.forEach(part => {
+                ctx.beginPath();
+                ctx.arc(obj.x + part.dx, obj.y + part.dy, part.r, 0, Math.PI * 2);
+                ctx.fill();
+            });
+        }
+
+        /**
+         * パーティクルを更新・描画する
+         * @param {object} obj - パーティクルを持つ物体オブジェクト
+         */
+        function updateAndDrawParticles(obj) {
+            obj.particles.forEach(p => {
+                // 位置を更新
+                p.x += p.vx;
+                p.y += p.vy;
+                // 透明度を減らす
+                p.alpha -= p.decay;
+
+                // 描画
+                if (p.alpha > 0) {
+                    ctx.globalAlpha = p.alpha;
+                    ctx.fillStyle = p.color;
+                    ctx.beginPath();
+                    ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
+                    ctx.fill();
+                }
+            });
+            // 透明になったパーティクルを配列から削除
+            obj.particles = obj.particles.filter(p => p.alpha > 0);
+            ctx.globalAlpha = 1.0; // 透明度をリセット
+        }
+
+        /**
+         * デフォルトの背景（画像が読み込まれる前）を描画する
+         */
+        function drawDefaultBackground() {
+            ctx.fillStyle = '#e0e0e0';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            ctx.fillStyle = '#555';
+            ctx.font = '20px sans-serif';
+            ctx.textAlign = 'center';
+            ctx.fillText('ここに画像ファイルをドラッグ＆ドロップするか、', canvas.width / 2, canvas.height / 2 - 20);
+            ctx.fillText('上のボタンから選択してください。', canvas.width / 2, canvas.height / 2 + 10);
+        }
+
+
+        // --- メインループ ---
+
+        let animationFrameId = null;
+
+        function gameLoop() {
+            // 1. キャンバスをクリア
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            // 2. 背景を描画
+            if (backgroundImage) {
+                ctx.drawImage(backgroundImage, 0, 0, canvas.width, canvas.height);
+            } else {
+                drawDefaultBackground();
+            }
+
+            // 3. すべての付着した物体と、そのパーティクルを描画・更新
+            attachedObjects.forEach(obj => {
+                drawObject(obj);
+                if (obj.particles.length > 0) {
+                    updateAndDrawParticles(obj);
+                }
+            });
+
+            // 4. 次のフレームをリクエスト
+            animationFrameId = requestAnimationFrame(gameLoop);
+        }
+
+        // 初期状態の描画
+        drawDefaultBackground();
+
+    </script>
+
+</body>
+</html>

@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <title>物体付着ゲーム</title>
+    <style>
+        body {
+            font-family: sans-serif;
+            text-align: center;
+            background-color: #f0f0f0;
+            margin: 0;
+            padding: 20px;
+        }
+        h1 {
+            color: #333;
+        }
+        canvas {
+            border: 2px solid #666;
+            cursor: crosshair;
+            background-color: #fff;
+            max-width: 100%;
+            height: auto;
+        }
+        input[type="file"] {
+            margin: 20px 0;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>物体付着ゲーム</h1>
+    <p>好きな背景画像をアップロードして、クリックで物体を付着させよう！</p>
+
+    <input type="file" id="bg-image-input" accept="image/*">
+    <br>
+    <canvas id="game-canvas"></canvas>
+
+    <script>
+        const imageInput = document.getElementById('bg-image-input');
+        const canvas = document.getElementById('game-canvas');
+        const ctx = canvas.getContext('2d');
+
+        const backgroundImage = new Image();
+        let objects = []; // 付着した物体の座標を保存する配列 {x, y}
+
+        // 1. 画像アップロード機能
+        imageInput.addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            if (!file) {
+                return;
+            }
+
+            // FileReaderを使って画像を読み込む
+            const reader = new FileReader();
+            reader.onload = (event) => {
+                backgroundImage.onload = () => {
+                    // キャンバスのサイズを画像に合わせる
+                    canvas.width = backgroundImage.width;
+                    canvas.height = backgroundImage.height;
+                    // オブジェクトの配列をリセット
+                    objects = [];
+                    // 再描画
+                    redraw();
+                };
+                backgroundImage.src = event.target.result;
+            };
+            reader.readAsDataURL(file);
+        });
+
+        // 2. 物体を付着させる機能
+        canvas.addEventListener('click', (e) => {
+            if (!backgroundImage.src) {
+                alert('先に背景画像を選択してください。');
+                return;
+            }
+
+            // キャンバス上のクリック座標を取得
+            const rect = canvas.getBoundingClientRect();
+            const scaleX = canvas.width / rect.width;
+            const scaleY = canvas.height / rect.height;
+            const x = (e.clientX - rect.left) * scaleX;
+            const y = (e.clientY - rect.top) * scaleY;
+            
+            // オブジェクトの情報を配列に追加
+            objects.push({ x: x, y: y });
+
+            // 再描画
+            redraw();
+        });
+
+        // 描画処理をまとめた関数
+        function redraw() {
+            // 背景画像を描画
+            ctx.clearRect(0, 0, canvas.width, canvas.height); // 一旦クリア
+            ctx.drawImage(backgroundImage, 0, 0, canvas.width, canvas.height);
+
+            // 保存されているすべての物体を描画
+            drawObjects();
+        }
+
+        // 物体を描画する関数
+        function drawObjects() {
+            ctx.font = '40px sans-serif'; // 物体のサイズ
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+
+            objects.forEach(obj => {
+                // ここで描画する絵文字を変更できます
+                ctx.fillText('💩', obj.x, obj.y);
+            });
+        }
+
+    </script>
+
+</body>
+</html>

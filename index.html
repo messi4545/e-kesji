@@ -1,0 +1,1060 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>e けすじー 〜超覚醒・神ケスモン降臨〜 | スマートパチンコ (スマパチ)</title>
+  
+  <!-- CSS Stylesheets -->
+  <link rel="stylesheet" href="css/cabinet.css">
+  <link rel="stylesheet" href="css/effects.css">
+  <link rel="stylesheet" href="css/screen.css">
+
+  <style>
+    /* Global Page Styling & Parlor Atmosphere */
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background: radial-gradient(circle at 50% 20%, #161a29 0%, #0c0e17 60%, #05060a 100%);
+      color: #e2e8f0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Hiragino Sans", "Meiryo", sans-serif;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-start;
+      overflow-x: hidden;
+      user-select: none;
+    }
+
+    /* Ambient Parlor Neon Lighting in Background */
+    body::before {
+      content: '';
+      position: fixed;
+      top: -20%;
+      left: 10%;
+      width: 80%;
+      height: 60%;
+      background: radial-gradient(ellipse at center, rgba(0, 229, 255, 0.08) 0%, rgba(255, 23, 68, 0.05) 45%, transparent 70%);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    /* Top Global Header Bar */
+    .pachinko-global-header {
+      position: sticky;
+      top: 0;
+      width: 100%;
+      background: rgba(14, 17, 24, 0.92);
+      backdrop-filter: blur(10px);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+      z-index: 1000;
+      padding: 8px 16px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.6);
+    }
+
+    .header-logo-group {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .header-logo-badge {
+      background: linear-gradient(135deg, #ff0055, #ff5500);
+      color: #fff;
+      font-size: 11px;
+      font-weight: 900;
+      padding: 3px 8px;
+      border-radius: 4px;
+      letter-spacing: 1px;
+      box-shadow: 0 0 10px rgba(255, 0, 85, 0.5);
+    }
+
+    .header-title {
+      font-size: 18px;
+      font-weight: 900;
+      letter-spacing: 1px;
+      background: linear-gradient(90deg, #ffffff, #00e5ff 60%, #ffd700);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .header-spec-tag {
+      font-size: 12px;
+      color: #8fa3c7;
+      font-weight: 600;
+    }
+
+    .header-actions {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .header-btn {
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      color: #e2e8f0;
+      padding: 6px 12px;
+      border-radius: 6px;
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .header-btn:hover {
+      background: rgba(0, 229, 255, 0.2);
+      border-color: #00e5ff;
+      color: #00e5ff;
+      box-shadow: 0 0 10px rgba(0, 229, 255, 0.3);
+    }
+
+    .header-btn.active {
+      background: #ff1744;
+      border-color: #ff1744;
+      color: #fff;
+      box-shadow: 0 0 12px rgba(255, 23, 68, 0.5);
+    }
+
+    /* Main Content Layout (Cabinet + Side Test Bar) */
+    .game-main-wrapper {
+      position: relative;
+      z-index: 1;
+      width: 100%;
+      max-width: 1380px;
+      display: flex;
+      flex-direction: row;
+      justify-content: center;
+      align-items: flex-start;
+      gap: 20px;
+      padding: 20px 16px 40px;
+      box-sizing: border-box;
+    }
+
+    /* Cabinet Center Column */
+    .cabinet-column {
+      flex: 1;
+      max-width: 980px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    /* Side Test & Debug Station */
+    .side-dashboard {
+      width: 300px;
+      background: rgba(18, 22, 33, 0.95);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 16px;
+      padding: 16px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.7);
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      backdrop-filter: blur(8px);
+      position: sticky;
+      top: 60px;
+    }
+
+    .dashboard-title {
+      font-size: 14px;
+      font-weight: 800;
+      letter-spacing: 1px;
+      color: #00e5ff;
+      border-bottom: 1px solid rgba(0, 229, 255, 0.2);
+      padding-bottom: 8px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .dashboard-title-badge {
+      font-size: 10px;
+      background: rgba(0, 229, 255, 0.15);
+      color: #00e5ff;
+      padding: 2px 6px;
+      border-radius: 4px;
+    }
+
+    .dashboard-section {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .dashboard-section-label {
+      font-size: 11px;
+      font-weight: 700;
+      color: #7d8ea8;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .dashboard-btn-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 6px;
+    }
+
+    .dashboard-btn {
+      background: linear-gradient(135deg, #202638, #161b29);
+      border: 1px solid #323b52;
+      color: #d8e2f0;
+      padding: 8px 6px;
+      border-radius: 8px;
+      font-size: 11px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.15s;
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 4px;
+    }
+
+    .dashboard-btn:hover {
+      background: #2a334d;
+      border-color: #00e5ff;
+      color: #00e5ff;
+      transform: translateY(-1px);
+      box-shadow: 0 4px 10px rgba(0, 229, 255, 0.2);
+    }
+
+    .dashboard-btn.btn-heso {
+      border-color: #00bcd4;
+      color: #4dd0e1;
+    }
+    .dashboard-btn.btn-denchu {
+      border-color: #ff9800;
+      color: #ffb74d;
+    }
+    .dashboard-btn.btn-kesubare {
+      border-color: #ff1744;
+      color: #ff5252;
+      background: linear-gradient(135deg, #3d141e, #1a0b10);
+    }
+    .dashboard-btn.btn-climax {
+      border-color: #ffd700;
+      color: #ffd700;
+      background: linear-gradient(135deg, #383011, #1a1605);
+    }
+    .dashboard-btn.btn-zenkaiten {
+      border-color: #d500f9;
+      color: #ea80fc;
+      background: linear-gradient(135deg, #331338, #18091a);
+      grid-column: span 2;
+    }
+
+    /* Live Game Status Pill Box */
+    .status-mini-box {
+      background: #0f121a;
+      border: 1px solid #232a3d;
+      border-radius: 8px;
+      padding: 10px;
+      font-size: 11px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .status-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .status-key {
+      color: #7b8ba6;
+    }
+
+    .status-val {
+      font-weight: bold;
+      color: #00e5ff;
+      font-family: monospace;
+    }
+
+    .status-val.val-rush {
+      color: #ff1744;
+    }
+    .status-val.val-lt {
+      color: #ffd700;
+    }
+
+    /* First-click Audio Unlock Banner */
+    .audio-unlock-curtain {
+      position: fixed;
+      bottom: 24px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: linear-gradient(135deg, #ff0055, #7928ca);
+      color: #ffffff;
+      padding: 14px 28px;
+      border-radius: 30px;
+      font-size: 15px;
+      font-weight: 800;
+      letter-spacing: 1px;
+      box-shadow: 0 8px 30px rgba(255, 0, 85, 0.6);
+      cursor: pointer;
+      z-index: 9999;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      animation: pulse-unlock-banner 1.5s infinite;
+      transition: opacity 0.4s, transform 0.4s;
+    }
+
+    .audio-unlock-curtain.hidden {
+      opacity: 0;
+      pointer-events: none;
+      transform: translate(-50%, 20px);
+    }
+
+    @keyframes pulse-unlock-banner {
+      0%, 100% { transform: translateX(-50%) scale(1); box-shadow: 0 8px 30px rgba(255, 0, 85, 0.6); }
+      50% { transform: translateX(-50%) scale(1.04); box-shadow: 0 12px 40px rgba(0, 229, 255, 0.8); }
+    }
+
+    /* Responsive Adjustments */
+    @media (max-width: 1280px) {
+      .game-main-wrapper {
+        flex-direction: column;
+        align-items: center;
+      }
+      .side-dashboard {
+        width: 100%;
+        max-width: 980px;
+        position: static;
+      }
+      .dashboard-btn-grid {
+        grid-template-columns: repeat(4, 1fr);
+      }
+      .dashboard-btn.btn-zenkaiten {
+        grid-column: span 2;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Top Global Header -->
+  <header class="pachinko-global-header">
+    <div class="header-logo-group">
+      <span class="header-logo-badge">e-機 スマパチ</span>
+      <h1 class="header-title">e けすじー</h1>
+      <span class="header-spec-tag">〜超覚醒・神ケスモン降臨〜 (1/349.9 LT 89.5%)</span>
+    </div>
+
+    <div class="header-actions">
+      <button class="header-btn" id="btn-header-zoom" type="button" title="実機全体 ↔ 液晶ズーム切替">
+        <span id="header-zoom-icon">🔍</span>
+        <span id="header-zoom-text">液晶ズーム</span>
+      </button>
+      <button class="header-btn" id="btn-toggle-sound" type="button" title="サウンド切替">
+        <span id="sound-btn-icon">🔊</span>
+        <span id="sound-btn-text">BGM/SE ON</span>
+      </button>
+      <button class="header-btn" id="btn-open-rules" type="button" title="機種スペック・遊び方">
+        <span>📖</span>
+        <span>遊び方</span>
+      </button>
+      <button class="header-btn" id="btn-fullscreen" type="button" title="全画面表示">
+        <span>⛶</span>
+      </button>
+    </div>
+  </header>
+
+  <!-- Audio Unlock Notification Floating Pill -->
+  <div class="audio-unlock-curtain" id="audio-unlock-pill">
+    <span>🔊</span>
+    <span>画面をクリックしてサウンドを有効化！</span>
+  </div>
+
+  <!-- Main Game Stage & Cabinet Wrapper -->
+  <div class="game-main-wrapper">
+    
+    <!-- Center Column: Pachinko Cabinet Mount -->
+    <div class="cabinet-column">
+      <div id="cabinet-mount" style="width: 100%;"></div>
+    </div>
+
+    <!-- Side Column: Real-time Debug / Quick Test Station -->
+    <aside class="side-dashboard">
+      <div class="dashboard-title">
+        <span>実機テストコンソール</span>
+        <span class="dashboard-title-badge">DEBUG CONTROLLER</span>
+      </div>
+
+      <!-- Real-time Mode & ST Monitor -->
+      <div class="status-mini-box">
+        <div class="status-row">
+          <span class="status-key">状態:</span>
+          <span class="status-val" id="monitor-state">通常 (1/349.9)</span>
+        </div>
+        <div class="status-row">
+          <span class="status-key">ST残回転:</span>
+          <span class="status-val" id="monitor-st">-</span>
+        </div>
+        <div class="status-row">
+          <span class="status-key">保留 (ヘソ/電):</span>
+          <span class="status-val" id="monitor-reserves">0 / 0</span>
+        </div>
+        <div class="status-row">
+          <span class="status-key">変動消化状態:</span>
+          <span class="status-val" id="monitor-spinning">待機中</span>
+        </div>
+      </div>
+
+      <!-- Quick Pocket Injections -->
+      <div class="dashboard-section">
+        <div class="dashboard-section-label">保留入賞テスト</div>
+        <div class="dashboard-btn-grid">
+          <button class="dashboard-btn btn-heso" id="dbg-heso-in" type="button">
+            <span>🎯 ヘソ入賞</span>
+            <small style="font-size:9px;opacity:0.8;">特図1 / 通常</small>
+          </button>
+          <button class="dashboard-btn btn-denchu" id="dbg-denchu-in" type="button">
+            <span>⚡ 電チュー入賞</span>
+            <small style="font-size:9px;opacity:0.8;">特図2 / 優先消化</small>
+          </button>
+        </div>
+      </div>
+
+      <!-- Trigger Advance Effects -->
+      <div class="dashboard-section">
+        <div class="dashboard-section-label">先読み・告知トリガー</div>
+        <div class="dashboard-btn-grid">
+          <button class="dashboard-btn btn-kesubare" id="dbg-kesubare" type="button">
+            <span>🚨 先バレ (ポキューン)</span>
+            <small style="font-size:9px;opacity:0.8;">赤保留+40%期待度</small>
+          </button>
+          <button class="dashboard-btn" id="dbg-revaburu" type="button">
+            <span>📳 レバブル激震</span>
+            <small style="font-size:9px;opacity:0.8;">レバーバイブ振動</small>
+          </button>
+          <button class="dashboard-btn" id="dbg-vflash" type="button">
+            <span>✨ V-フラッシュ</span>
+            <small style="font-size:9px;opacity:0.8;">大当り当確告知音</small>
+          </button>
+          <button class="dashboard-btn" id="dbg-p-blow" type="button">
+            <span>💨 P-Blow エアー</span>
+            <small style="font-size:9px;opacity:0.8;">風体感ギミック</small>
+          </button>
+        </div>
+      </div>
+
+      <!-- Guaranteed Reach / Hit Scenarios -->
+      <div class="dashboard-section">
+        <div class="dashboard-section-label">演出・大当り強制トリガー</div>
+        <div class="dashboard-btn-grid">
+          <button class="dashboard-btn btn-climax" id="dbg-climax" type="button">
+            <span>👑 超進化SP当り</span>
+            <small style="font-size:9px;opacity:0.8;">フル結合実写動画</small>
+          </button>
+          <button class="dashboard-btn" id="dbg-rush1500" type="button">
+            <span>💥 RUSH直撃 1500</span>
+            <small style="font-size:9px;opacity:0.8;">10R + ST100回</small>
+          </button>
+          <button class="dashboard-btn btn-zenkaiten" id="dbg-zenkaiten" type="button">
+            <span>🌈 歓喜の全回転 3000 LT</span>
+            <small style="font-size:9px;opacity:0.8;">キタCUE MV + 極LT89.5%突入</small>
+          </button>
+        </div>
+      </div>
+
+      <!-- Utility / Economy -->
+      <div class="dashboard-section">
+        <div class="dashboard-section-label">ユーティリティ</div>
+        <div class="dashboard-btn-grid">
+          <button class="dashboard-btn" id="dbg-add-balls" type="button">
+            <span>💰 +2000発 補充</span>
+          </button>
+          <button class="dashboard-btn" id="dbg-fast-mode" type="button">
+            <span>⚡ 高速消化: OFF</span>
+          </button>
+        </div>
+      </div>
+    </aside>
+
+  </div>
+
+  <!-- Spec & Game Guide Modal -->
+  <div class="cabinet-modal-overlay" id="rules-modal" style="display: none;">
+    <div class="cabinet-modal-card" style="max-width: 650px;">
+      <div class="modal-header">
+        <div class="modal-title">
+          <span>機種スペック & 遊び方</span>
+          <span class="modal-title-badge">SPEC & RULES</span>
+        </div>
+        <button class="modal-close-btn" id="btn-close-rules" type="button">&times;</button>
+      </div>
+      <div class="modal-body" style="font-size: 13px; line-height: 1.7; color: #c4d1e6;">
+        <h4 style="color:#00e5ff; margin-bottom: 6px;">■ 基本スペック (e けすじー)</h4>
+        <ul style="padding-left: 18px; margin-bottom: 14px;">
+          <li><strong>通常時確率:</strong> 1/349.9 (スマートパチンコ e-機)</li>
+          <li><strong>RUSH / 高確率時:</strong> 1/73.5</li>
+          <li><strong>けすじーRUSH (下位):</strong> ST 100回 (継続率 約74.6% 〜 75%)</li>
+          <li><strong>極・超ケスジーRUSH LT (上位ラッキートリガー):</strong> ST 165回 (継続率 約89.5%)</li>
+          <li><strong>出玉:</strong> 10R×1 (1500個) / 10R×2 (3000個)</li>
+        </ul>
+
+        <h4 style="color:#ff1744; margin-bottom: 6px;">■ 操作方法</h4>
+        <ul style="padding-left: 18px; margin-bottom: 14px;">
+          <li><strong>ハンドル操作:</strong> マウス/タッチでドラッグまたはゲージをクリック。ホイールスクロールでも調整可能。</li>
+          <li><strong>自動発射 (オート):</strong> ハンドル横の「AUTO」ボタンまたはキーボード「<strong>A</strong>」キーで常時発射。</li>
+          <li><strong>ボタンPUSH:</strong> 盤面の「PUSH」ボタン、またはキーボード「<strong>Space</strong>」「<strong>Enter</strong>」キー。</li>
+          <li><strong>激震レバー:</strong> クライマックス演出時に3Dポップアップ！クリックまたは「<strong>↓ (下矢印)</strong>」キーで引く！</li>
+          <li><strong>右打ち指示:</strong> RUSH中や大当り中はハンドルを右全開（75%以上）に回して電チュー・アタッカーを狙え！</li>
+        </ul>
+
+        <h4 style="color:#ffd700; margin-bottom: 6px;">■ 実機カスタマイズ機能</h4>
+        <p>下皿の「⚙️ カスタム」ボタンから「ケスバレ (先バレ赤40%/虹100%)」「先読み熱モード」「レバブルUP」等をいつでも設定できます。</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Main ES6 Modules Integration Script -->
+  <script type="module">
+    import { PachinkoEngine, CustomConfig, GAME_STATES } from './src/engine/index.js';
+    import { Cabinet } from './src/ui/Cabinet.js';
+    import { ScreenDirector } from './src/director/ScreenDirector.js';
+    import { MediaManager } from './src/media/index.js';
+
+    // Fast-mode flag for high-speed simulation testing
+    let isFastMode = false;
+    let isProcessingSpin = false;
+    let hasAudioUnlocked = false;
+
+    // 1. Initialize Simulation Engine
+    const config = new CustomConfig();
+    const engine = new PachinkoEngine({
+      config,
+      initialBalls: 2000
+    });
+
+    // 2. Initialize Media Manager (Sound & Video)
+    const media = new MediaManager({
+      basePath: ''
+    });
+
+    // 3. Initialize Cabinet (Frame, Controls, DataCounter, CustomModal)
+    const cabinetMount = document.getElementById('cabinet-mount');
+    const cabinet = new Cabinet({
+      container: cabinetMount,
+      initialBalls: engine.balls,
+      onFire: (data) => {
+        handleBallShot(data);
+      },
+      onButtonPress: (data) => {
+        handleCabinetButtonTrigger();
+      },
+      onLeverPull: (data) => {
+        handleCabinetLeverTrigger();
+      },
+      onConfigChange: (newCfg) => {
+        applyConfigToEngineAndMedia(newCfg);
+      },
+      onSoundTest: (type) => {
+        if (type === 'red' || type === 'rainbow') {
+          media.playKesuBare();
+        } else {
+          media.sound.playClick();
+        }
+      }
+    });
+
+    // Connect physical 2D ball pocket entries from PlayfieldCanvas
+    cabinet.onHesoEnter(() => {
+      triggerHesoEntry();
+    });
+    cabinet.onDenchuEnter(() => {
+      triggerDenchuEntry();
+    });
+    cabinet.onAttackerEnter(() => {
+      advanceActiveBonusRound();
+    });
+
+    // 4. Mount ScreenDirector inside Cabinet LCD Stage
+    // We create a dedicated child container to preserve V-Flash jewel and light guide overlays
+    const screenMount = document.createElement('div');
+    screenMount.id = 'screen-director-mount';
+    screenMount.style.cssText = 'position: absolute; inset: 0; width: 100%; height: 100%;';
+    cabinet.dom.lcdContainer.appendChild(screenMount);
+
+    const screenDirector = new ScreenDirector({
+      container: screenMount,
+      cabinet: cabinet,
+      mediaManager: media
+    });
+    screenDirector.setCabinet(cabinet);
+    screenDirector.setMedia(media);
+
+    // Mount video player overlay in LCD container
+    media.init(cabinet.dom.lcdContainer);
+
+    // Initial reserve update
+    screenDirector.updateReserves(engine.hesoQueue, engine.denchuQueue);
+    screenDirector.setMode(engine.state);
+    cabinet.dataCounter.updateData(engine.getStats());
+
+    // =========================================================================
+    // AUDIO UNLOCK & GLOBAL USER GESTURE
+    // =========================================================================
+    const unlockCurtain = document.getElementById('audio-unlock-pill');
+    function unlockAudioOnce() {
+      if (hasAudioUnlocked) return;
+      hasAudioUnlocked = true;
+      media.unlockAudio();
+      if (unlockCurtain) {
+        unlockCurtain.classList.add('hidden');
+      }
+    }
+    window.addEventListener('click', unlockAudioOnce, { passive: true });
+    window.addEventListener('keydown', unlockAudioOnce, { passive: true });
+    window.addEventListener('touchstart', unlockAudioOnce, { passive: true });
+
+    // =========================================================================
+    // BALL FIRING & POCKET ENTRY DYNAMICS
+    // =========================================================================
+    function handleBallShot(data) {
+      if (engine.balls <= 0) {
+        if (config.get('autoSupply')) {
+          engine.rentBalls(500);
+          cabinet.setBallCount(engine.balls);
+          cabinet.dataCounter.updateData(engine.getStats());
+        } else {
+          return;
+        }
+      }
+
+      // Consume ball in engine
+      const fired = engine.shootBall();
+      if (!fired) return;
+
+      cabinet.setBallCount(engine.balls);
+
+      // Audio click for shot ball
+      if (Math.random() < 0.3) {
+        media.sound.playReelStop(0); // subtle metallic click
+      }
+
+      const power = data.power || 50;
+      const isRight = power > 75;
+
+      // Remind player to turn right during RUSH / BONUS if firing left
+      if ((engine.state === GAME_STATES.RUSH_LOW || engine.state === GAME_STATES.RUSH_HIGH_LT || engine.state === GAME_STATES.BONUS) && !isRight) {
+        cabinet.flashIllumination('red', 1, 80);
+      }
+
+      updateStatusMonitor();
+    }
+
+    // Trigger Heso Entry (特図1)
+    function triggerHesoEntry() {
+      const reserve = engine.insertHesoBall();
+      if (reserve) {
+        media.sound.playTenpai('entry');
+        cabinet.flashIllumination('white', 1, 60);
+        screenDirector.updateReserves(engine.hesoQueue, engine.denchuQueue);
+        updateStatusMonitor();
+        checkAndTriggerSpin();
+      }
+    }
+
+    // Trigger Denchu Entry (特図2)
+    function triggerDenchuEntry() {
+      const reserve = engine.insertDenchuBall();
+      if (reserve) {
+        media.sound.playTenpai('entry');
+        cabinet.flashIllumination('cyan', 1, 60);
+        screenDirector.updateReserves(engine.hesoQueue, engine.denchuQueue);
+        updateStatusMonitor();
+        checkAndTriggerSpin();
+      }
+    }
+
+    // =========================================================================
+    // ENGINE EVENTS WIRE-UP
+    // =========================================================================
+    // 先バレ (Kesu-Bare Pokyun)
+    engine.on('kesu_bare', ({ reserve }) => {
+      media.playKesuBare();
+      cabinet.flashIllumination('red', 4, 120);
+      cabinet.controls?.triggerRumble?.(800);
+      screenDirector.chanceUpSystem?.flashLightGuide?.('red', 2);
+    });
+
+    // レバブル (Revaburu Vibration)
+    engine.on('revaburu', () => {
+      media.playRevaburu(1.2);
+      cabinet.controls?.triggerRumble?.(1200);
+      screenDirector.pseudoSeries?.startRumble?.(1000);
+    });
+
+    // V-Flash
+    engine.on('v_flash', () => {
+      media.playVFlash();
+      cabinet.triggerVFlash();
+    });
+
+    // Stats Change
+    engine.on('stats_change', (stats) => {
+      cabinet.dataCounter.updateData(stats);
+      updateStatusMonitor();
+    });
+
+    // RUSH End
+    engine.on('rush_end', ({ finalStreak, totalPayout }) => {
+      screenDirector.setMode('NORMAL');
+      cabinet.setLightingPattern('idle');
+      updateStatusMonitor();
+    });
+
+    // =========================================================================
+    // SPIN QUEUE ORCHESTRATOR
+    // =========================================================================
+    async function checkAndTriggerSpin() {
+      if (isProcessingSpin) return;
+      if (engine.state === GAME_STATES.BONUS) return;
+      if (engine.hesoQueue.length === 0 && engine.denchuQueue.length === 0) return;
+
+      isProcessingSpin = true;
+      updateStatusMonitor();
+
+      try {
+        const scenario = engine.startNextSpin();
+        if (!scenario) {
+          isProcessingSpin = false;
+          updateStatusMonitor();
+          return;
+        }
+
+        // Update LCD HUD reserves & data counter
+        screenDirector.updateReserves(engine.hesoQueue, engine.denchuQueue);
+        cabinet.dataCounter.updateData(engine.getStats());
+        updateStatusMonitor();
+
+        // If fast mode is active, speed up non-zenkaiten pseudo chains
+        if (isFastMode && scenario.reachType !== 'ZENKAITEN') {
+          scenario.pseudoChains = Math.min(scenario.pseudoChains, 2);
+        }
+
+        // Play full cinematic sequence on Screen Director
+        const spinResult = await screenDirector.playScenario(scenario);
+
+        // Complete spin in engine
+        const completion = engine.completeSpin();
+        cabinet.dataCounter.updateData(engine.getStats());
+
+        // Check for jackpot hit!
+        if (completion.isHit) {
+          await runBonusJackpotSequence(completion.bonus, scenario);
+        }
+
+        // Update mode & state
+        screenDirector.setMode(engine.state);
+        cabinet.dataCounter.updateData(engine.getStats());
+
+      } catch (err) {
+        console.error('[Integration] Error in spin loop:', err);
+      } finally {
+        isProcessingSpin = false;
+        updateStatusMonitor();
+        // Continue processing remaining reserves in queue
+        if (engine.hesoQueue.length > 0 || engine.denchuQueue.length > 0) {
+          setTimeout(() => checkAndTriggerSpin(), 100);
+        }
+      }
+    }
+
+    // =========================================================================
+    // BONUS / JACKPOT CELEBRATION & ATTACKER SEQUENCE
+    // =========================================================================
+    async function runBonusJackpotSequence(bonus, scenario) {
+      screenDirector.setMode('BONUS');
+      media.playFeverFanfare();
+      cabinet.setLightingPattern('rainbow', 8000);
+      updateStatusMonitor();
+
+      // Show win celebration banner
+      const is3000 = bonus.type.includes('3000');
+      const winTitle = is3000 ? '極FEVER 3000' : 'FEVER 1500';
+      screenDirector.chanceUpSystem.showWinCelebration(bonus.targetPayout, winTitle);
+
+      await new Promise(r => setTimeout(r, isFastMode ? 1200 : 3500));
+      screenDirector.chanceUpSystem.hideWinCelebration();
+
+      // Round-by-round Attacker progression
+      const totalRounds = bonus.totalRounds || 10;
+      for (let r = 1; r <= totalRounds; r++) {
+        // Advance round
+        const res = engine.advanceBonusRound();
+        cabinet.setBallCount(engine.balls);
+        cabinet.dataCounter.updateData(engine.getStats());
+        media.sound.playReelStop(2); // payout sound
+        await new Promise(resolve => setTimeout(resolve, isFastMode ? 80 : 250));
+      }
+
+      // Complete bonus and transition
+      const finalResult = engine.completeBonus();
+      screenDirector.setMode(engine.state);
+      cabinet.dataCounter.updateData(engine.getStats());
+      updateStatusMonitor();
+
+      // Transition notification
+      if (engine.state === GAME_STATES.RUSH_HIGH_LT) {
+        cabinet.setLightingPattern('gold-radiance', 4000);
+        screenDirector.chanceUpSystem.showTitle('極・超ケスジーRUSH LT 突入！', 'gold', 3500);
+        screenDirector.chanceUpSystem.showTelop('継続率 約89.5%！限界突破の出玉性能！', 'gold', 3500);
+      } else if (engine.state === GAME_STATES.RUSH_LOW) {
+        cabinet.setLightingPattern('red-flash', 3500);
+        screenDirector.chanceUpSystem.showTitle('けすジーRUSH 突入！', 'red', 3500);
+        screenDirector.chanceUpSystem.showTelop('継続率 約75%！右打ちで電チューを狙え！', 'white', 3500);
+      }
+
+      await new Promise(r => setTimeout(r, isFastMode ? 800 : 2000));
+    }
+
+    function advanceActiveBonusRound() {
+      if (engine.state !== GAME_STATES.BONUS) return;
+      const res = engine.advanceBonusRound();
+      cabinet.setBallCount(engine.balls);
+      cabinet.dataCounter.updateData(engine.getStats());
+      media.sound.playReelStop(2);
+    }
+
+    // =========================================================================
+    // PHYSICAL CONTROLS HOOKS (Push Button & Lever)
+    // =========================================================================
+    function handleCabinetButtonTrigger() {
+      // If decision button prompt is active on LCD, click it!
+      const activeDevice = document.getElementById('active-decision-device');
+      if (activeDevice) {
+        activeDevice.click();
+      }
+      media.sound.playButtonPush(true);
+      cabinet.flashIllumination('cyan', 1, 100);
+    }
+
+    function handleCabinetLeverTrigger() {
+      const activeDevice = document.getElementById('active-decision-device');
+      if (activeDevice) {
+        activeDevice.click();
+      }
+      media.sound.playRevaburu(0.5);
+      cabinet.flashIllumination('gold', 2, 100);
+    }
+
+    // =========================================================================
+    // CONFIGURATION SYNC
+    // =========================================================================
+    function applyConfigToEngineAndMedia(cfg) {
+      if (!cfg) return;
+      // Map CustomModal values to engine CustomConfig
+      if (cfg.kesuBare) {
+        config.set('kesuBare', cfg.kesuBare === 'off' ? 'OFF' : (cfg.kesuBare === 'rainbow' ? 'HIGH' : 'NORMAL'));
+      }
+      if (cfg.sakiyomi) {
+        config.set('sakiyomi', cfg.sakiyomi === 'netsu' ? 'SUPER_HOT' : (cfg.sakiyomi === 'chance' ? 'CHANCE' : 'NORMAL'));
+      }
+      if (cfg.revaburu) {
+        config.set('revaburu', cfg.revaburu === 'on' ? 'ON' : 'OFF');
+      }
+      if (cfg.pFlash) {
+        config.set('vFlash', cfg.pFlash === 'on' ? 'ON' : 'OFF');
+      }
+      if (cfg.volume) {
+        if (cfg.volume.master !== undefined) media.setMasterVolume(cfg.volume.master / 100);
+        if (cfg.volume.se !== undefined) media.setSFXVolume(cfg.volume.se / 100);
+        if (cfg.volume.bgm !== undefined) media.setBGMVolume(cfg.volume.bgm / 100);
+      }
+    }
+
+    // =========================================================================
+    // UI / STATUS MONITOR
+    // =========================================================================
+    const elState = document.getElementById('monitor-state');
+    const elSt = document.getElementById('monitor-st');
+    const elReserves = document.getElementById('monitor-reserves');
+    const elSpinning = document.getElementById('monitor-spinning');
+
+    function updateStatusMonitor() {
+      if (!elState) return;
+
+      let stateText = '通常 (1/349.9)';
+      elState.className = 'status-val';
+
+      if (engine.state === GAME_STATES.RUSH_LOW) {
+        stateText = 'けすRUSH (1/73.5)';
+        elState.classList.add('val-rush');
+      } else if (engine.state === GAME_STATES.RUSH_HIGH_LT) {
+        stateText = '極・超ケスジーRUSH LT (1/73.5)';
+        elState.classList.add('val-lt');
+      } else if (engine.state === GAME_STATES.BONUS) {
+        stateText = '大当り消化中';
+        elState.classList.add('val-rush');
+      }
+      elState.textContent = stateText;
+
+      elSt.textContent = (engine.state === GAME_STATES.RUSH_LOW || engine.state === GAME_STATES.RUSH_HIGH_LT)
+        ? `${engine.stRemaining} / ${engine.stLimit} 回`
+        : '-';
+
+      elReserves.textContent = `${engine.hesoQueue.length} / ${engine.denchuQueue.length}`;
+      elSpinning.textContent = isProcessingSpin ? '⚡ 変動中' : '待機中';
+      elSpinning.style.color = isProcessingSpin ? '#ff1744' : '#00e5ff';
+    }
+
+    // =========================================================================
+    // SIDE DASHBOARD BUTTONS WIRE-UP
+    // =========================================================================
+    // 1. Manual Heso In
+    document.getElementById('dbg-heso-in')?.addEventListener('click', () => {
+      unlockAudioOnce();
+      triggerHesoEntry();
+    });
+
+    // 2. Manual Denchu In
+    document.getElementById('dbg-denchu-in')?.addEventListener('click', () => {
+      unlockAudioOnce();
+      triggerDenchuEntry();
+    });
+
+    // 3. Trigger Kesu-Bare
+    document.getElementById('dbg-kesubare')?.addEventListener('click', () => {
+      unlockAudioOnce();
+      engine.forceScenario('KESU_BARE');
+      checkAndTriggerSpin();
+    });
+
+    // 4. Trigger Revaburu
+    document.getElementById('dbg-revaburu')?.addEventListener('click', () => {
+      unlockAudioOnce();
+      media.playRevaburu(1.5);
+      cabinet.controls?.triggerRumble?.(1500);
+      screenDirector.pseudoSeries?.startRumble?.(1200);
+    });
+
+    // 5. Trigger V-Flash
+    document.getElementById('dbg-vflash')?.addEventListener('click', () => {
+      unlockAudioOnce();
+      media.playVFlash();
+      cabinet.triggerVFlash();
+    });
+
+    // 6. Trigger P-Blow
+    document.getElementById('dbg-p-blow')?.addEventListener('click', () => {
+      unlockAudioOnce();
+      cabinet.triggerAirBlow();
+    });
+
+    // 7. Force Climax SP Win (オーバードケスモン超進化)
+    document.getElementById('dbg-climax')?.addEventListener('click', () => {
+      unlockAudioOnce();
+      engine.forceScenario('CLIMAX');
+      checkAndTriggerSpin();
+    });
+
+    // 8. Force RUSH 1500 Hit
+    document.getElementById('dbg-rush1500')?.addEventListener('click', () => {
+      unlockAudioOnce();
+      engine.forceScenario('RUSH_1500');
+      checkAndTriggerSpin();
+    });
+
+    // 9. Force Zenkaiten 3000 LT (キタCUE MV + 3000個 + LT突入)
+    document.getElementById('dbg-zenkaiten')?.addEventListener('click', () => {
+      unlockAudioOnce();
+      engine.forceScenario('ZENKAITEN');
+      checkAndTriggerSpin();
+    });
+
+    // 10. Add Balls
+    document.getElementById('dbg-add-balls')?.addEventListener('click', () => {
+      cabinet.addBalls(2000);
+      engine.rentBalls(2000);
+      cabinet.dataCounter.updateData(engine.getStats());
+      updateStatusMonitor();
+    });
+
+    // 11. Fast-mode Toggle
+    const btnFast = document.getElementById('dbg-fast-mode');
+    btnFast?.addEventListener('click', () => {
+      isFastMode = !isFastMode;
+      btnFast.textContent = isFastMode ? '⚡ 高速消化: ON' : '⚡ 高速消化: OFF';
+      btnFast.style.borderColor = isFastMode ? '#ff0055' : '#323b52';
+      btnFast.style.color = isFastMode ? '#ff0055' : '#d8e2f0';
+    });
+
+    // =========================================================================
+    // HEADER BUTTONS WIRE-UP
+    // =========================================================================
+    // Zoom Toggle in Header
+    const btnHeaderZoom = document.getElementById('btn-header-zoom');
+    const headerZoomIcon = document.getElementById('header-zoom-icon');
+    const headerZoomText = document.getElementById('header-zoom-text');
+    btnHeaderZoom?.addEventListener('click', () => {
+      cabinet.toggleZoom();
+      if (headerZoomIcon && headerZoomText) {
+        headerZoomIcon.textContent = cabinet.isZoomed ? '🔎' : '🔍';
+        headerZoomText.textContent = cabinet.isZoomed ? '全体表示' : '液晶ズーム';
+      }
+    });
+
+    // Sound Toggle
+    const btnSound = document.getElementById('btn-toggle-sound');
+    const soundIcon = document.getElementById('sound-btn-icon');
+    const soundText = document.getElementById('sound-btn-text');
+    btnSound?.addEventListener('click', () => {
+      unlockAudioOnce();
+      const isMuted = media.toggleMute();
+      if (isMuted) {
+        soundIcon.textContent = '🔇';
+        soundText.textContent = 'MUTE';
+        btnSound.classList.add('active');
+      } else {
+        soundIcon.textContent = '🔊';
+        soundText.textContent = 'BGM/SE ON';
+        btnSound.classList.remove('active');
+      }
+    });
+
+    // Rules Modal
+    const rulesModal = document.getElementById('rules-modal');
+    document.getElementById('btn-open-rules')?.addEventListener('click', () => {
+      if (rulesModal) rulesModal.style.display = 'flex';
+    });
+    document.getElementById('btn-close-rules')?.addEventListener('click', () => {
+      if (rulesModal) rulesModal.style.display = 'none';
+    });
+    rulesModal?.addEventListener('click', (e) => {
+      if (e.target === rulesModal) rulesModal.style.display = 'none';
+    });
+
+    // Fullscreen Toggle
+    document.getElementById('btn-fullscreen')?.addEventListener('click', () => {
+      if (!document.fullscreenElement) {
+        document.documentElement.requestFullscreen().catch(() => {});
+      } else {
+        document.exitFullscreen().catch(() => {});
+      }
+    });
+
+    // Auto-sync initial state
+    updateStatusMonitor();
+    console.log('[e けすじー] Game initialized successfully!');
+  </script>
+</body>
+</html>
