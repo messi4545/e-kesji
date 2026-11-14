@@ -1,0 +1,10 @@
+scripts/
+start_pachinko.bat
+verify_browser.js
+test_engine.js
+test_stats.js
+test_video_shot.js
+screenshot_*.png
+verification_*.png
+.temp_chrome_profile*
+.git
